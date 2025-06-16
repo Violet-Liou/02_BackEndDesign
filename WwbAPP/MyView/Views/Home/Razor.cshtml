@@ -1,0 +1,51 @@
+﻿
+@{
+    ViewData["Title"] = "Razor語法";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@{
+    string name = "Violet";
+
+    var age = 27;
+    //age = "27"; >>報錯
+
+    int Math = 85, Eng = 90, Art = 100;
+
+    bool Performance=true;
+
+    @:My name is Violet
+    <br />
+    @:My name is @name
+
+    <h1>My name is @name</h1>
+}
+
+<h3>@Math+@Eng+@Art</h3> <!--呈現文字-->
+<h3>@Math+Eng+Art</h3> <!--呈現文字-->
+<h3>@(Math + Eng + Art)</h3> <!--成功加總!!-->
+<h3>@Math+@Eng+@Art=@(Math + Eng + Art)</h3>
+
+@if (Performance)
+{
+    <h2>歡迎</h2>
+}
+else
+{
+    <h2>Error</h2>
+}
+
+@{
+    string[] nm = { "瑞豐夜市", "新堀江商圈", "六合夜市", "青年夜市", "花園夜市", "大東夜市", "武聖夜市" };
+}
+
+<div class="col-3">
+    <ul class="list-group">
+		@foreach (var item in nm)
+		{
+			<li class="list-group-item">@item</li>
+		}
+    </ul>
+</div>
+
