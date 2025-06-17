@@ -1,23 +1,21 @@
 ﻿@model MyModel_DBFirst.Models.tStudent
 
 @{
-    ViewData["Title"] = "修改學生資料";
+    ViewData["Title"] = "Create";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>Create</h1>
 
-<h4>@ViewData["Now"]</h4>
+<h4>tStudent</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="fStuId" />
             <div class="form-group">
                 <label asp-for="fStuId" class="control-label"></label>
-                <input asp-for="fStuId" class="form-control" readonly />
-           @*      <div>@Model.fStuId</div> *@
-              
+                <input asp-for="fStuId" class="form-control" />
+                <span asp-validation-for="fStuId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="fName" class="control-label"></label>
@@ -36,11 +34,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="DeptID" class="control-label"></label>
-                <input asp-for="DeptID" class="form-control" />
-                <span asp-validation-for="DeptID" class="text-danger"></span>
+                <select asp-for="DeptID" class ="form-control" asp-items="ViewBag.DeptID"></select>
             </div>
             <div class="form-group">
-                <input type="submit" value="更新" class="btn btn-warning" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>

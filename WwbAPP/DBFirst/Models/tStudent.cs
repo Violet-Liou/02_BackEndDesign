@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DBFirst.Models;
 
@@ -30,4 +31,12 @@ public partial class tStudent
     [Display(Name = "成績")]
     [Range(0, 100, ErrorMessage = "成績必須介於0到100之間")]
     public int? fScore { get; set; }
+
+    //5.2.3 修改tStudent Class以建立與Department的關聯，內容如下
+    [Display(Name = "科系")]
+    [ForeignKey("Department")]
+    public string DeptID { get; set; } = null!;
+
+    public virtual Department? Department { get; set; } //這是一對多關聯，表示一個科系可以有多個學生
+
 }

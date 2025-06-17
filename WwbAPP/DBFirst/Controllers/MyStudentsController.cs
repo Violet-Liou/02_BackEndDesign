@@ -103,5 +103,22 @@ namespace DBFirst.Controllers
 
         }
 
+        //4.5.1 撰寫Delete Action程式碼
+        public IActionResult Delete(string id)
+        {
+            //DELETE FROM tStudent WHERE fStuId = id
+            var result = db.tStudent.Find(id); //使用Find方法查詢學號是否存在
+
+            if(result == null)
+            {
+                return NotFound(); //如果找不到對應的學生資料，則返回404 Not Found
+            }
+
+            db.tStudent.Remove(result); //如果找到對應的學生資料，則將其從模型資料中刪除
+            db.SaveChanges(); //將變更儲存到資料庫
+
+            return RedirectToAction("Index"); //刪除完成後，導向到Index Action
+        }
+
     }
 }
