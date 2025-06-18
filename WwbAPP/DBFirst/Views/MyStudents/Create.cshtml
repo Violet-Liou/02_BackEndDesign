@@ -22,6 +22,28 @@
                 <input asp-for="fName" class="form-control" />
                 <span asp-validation-for="fName" class="text-danger"></span>
             </div>
+            @*   //5.5.4 修改 Create View *@
+            <div class="form-group">
+                <label asp-for="DeptID" class="control-label"></label>
+
+                @* 原先系統產生的寫法(還沒有關聯上Department)
+                <input asp-for="DeptID" class="form-control" /> *@
+
+                @* 1. 一般會想到的寫法
+                <select>
+					<option value="">請選擇系所</option>
+					@foreach (var item in ViewBag.DeptID)
+					{
+						<option value="@item.Value">@item.Text</option>
+					}
+                </select> *@
+
+                @* 2. 使用ASP.NET Core的Tag Helper來產生下拉選單 *@
+                <select asp-for="DeptID" class="form-control" asp-items="@ViewBag.Dept"></select>
+                @* ViewBag =>一個動態型別(需要耗一點資源去維護)。透過一個袋子，把ViewData的物件取出來。 *@
+
+                <span asp-validation-for="DeptID" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="fEmail" class="control-label"></label>
                 <input asp-for="fEmail" class="form-control" />
@@ -32,11 +54,7 @@
                 <input asp-for="fScore" class="form-control" />
                 <span asp-validation-for="fScore" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DeptID" class="control-label"></label>
-                <input asp-for="DeptID" class="form-control" />
-                <span asp-validation-for="DeptID" class="text-danger"></span>
-            </div>
+            
             <div class="form-group">
                 <input type="submit" value="確定新增" class="btn btn-success" />
             </div>

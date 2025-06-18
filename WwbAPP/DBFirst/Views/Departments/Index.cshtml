@@ -1,0 +1,41 @@
+﻿@model IEnumerable<DBFirst.Models.Department>
+
+@{
+    ViewData["Title"] = "科系列表";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create" class="btn-warning">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DeptID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeptName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeptID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeptName)
+            </td>
+            <td>
+                    @* <a asp-action="Edit" asp-route-id="@item.DeptID" class="btn btn-warning btn-sm">編輯</a> |
+                    <a asp-action="Details" asp-route-id="@item.DeptID" class="btn btn-primary btn-sm">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.DeptID" class="btn btn-danger btn-sm">刪除</a> *@
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

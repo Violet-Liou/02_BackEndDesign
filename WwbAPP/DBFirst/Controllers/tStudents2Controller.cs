@@ -24,6 +24,8 @@ namespace DBFirst.Controllers
         public async Task<IActionResult> Index()
         {
             var dbStudentsContext = _context.tStudent.Include(t => t.Department);
+            //要能寫include，必須在tStudent.cs中加入Department的屬性
+            //並寫上public virtual Department? Department { get; set; } =>加上關聯性
             return View(await dbStudentsContext.ToListAsync());
         }
 
@@ -49,7 +51,11 @@ namespace DBFirst.Controllers
         // GET: tStudents2/Create
         public IActionResult Create()
         {
-            ViewData["DeptID"] = new SelectList(_context.Department, "DeptID", "DeptID");
+            ViewData["DeptID"] = new SelectList(_context.Department, "DeptID", "DeptName");
+            //new SelectList =>做成一個select下拉選單
+            //_context.Department =>要用哪一個資料表
+            //DeptID是實際上要讀取到的值
+            //DeptName是要顯示的值
             return View();
         }
 

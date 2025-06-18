@@ -1,5 +1,7 @@
 ﻿using DBFirst.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace DBFirst.Controllers
 {
@@ -21,7 +23,9 @@ namespace DBFirst.Controllers
             //var result = from s in db.tStudent
             //             select s;
             //第二種寫法(較短)
-            var result = db.tStudent.ToList(); //ToList =>將查詢結果轉換為List<tStudent>型別
+            //var result = db.tStudent.ToList(); //ToList =>將查詢結果轉換為List<tStudent>型別
+
+            var result = db.tStudent.Include(t => t.Department).ToList(); //關聯Department資料表
 
             //★重要
             return View(result); //要記得回傳result，否則無法正確顯示表單!!!!!!
@@ -32,6 +36,12 @@ namespace DBFirst.Controllers
         //4.3.2 建立Create View
         public IActionResult Create()
         {
+            //5.5.3 修改 Create Action
+            ViewData["Dept"] = new SelectList(db.Department, "DeptID", "DeptName"); //建立給下拉選單的資料來源
+            //new SelectList =>做成一個select下拉選單
+            //_context.Department =>要用哪一個資料表
+            //DeptID是實際上要讀取到的值
+            //DeptName是要顯示的值
             return View();
         }
 
@@ -79,6 +89,9 @@ namespace DBFirst.Controllers
             {
                 return NotFound(); //如果找不到對應的學生資料，則返回404 Not Found
             }
+
+            //5.5.5 修改 Edit Action
+            ViewData["Dept"] = new SelectList(db.Department, "DeptID", "DeptName"); //建立給下拉選單的資料來源
 
             return View(result);
         }
