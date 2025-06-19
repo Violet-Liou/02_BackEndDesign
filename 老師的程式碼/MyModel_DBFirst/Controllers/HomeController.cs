@@ -293,8 +293,22 @@ namespace MyModel_DBFirst.Controllers
 //5.6.4 參考2 .2.1修改建立DbContext物件的程式
 //5.6.5 測試
 //5.6.6 編輯Department 模型
-//5.6.7 編輯Department View
+//5.6.7 依需求修改或移除Department View及DepartmentsController Action
 //5.6.8 在DepartmentsController Create Action中加入檢查科系代碼是否重覆的程式
 
 
 //5.7   編輯Layout選單，加入「科系管理」及「學生資料管理」
+
+
+
+//5.8   使用者介面的運用技巧-View Model
+//5.8.1 建立ViewModels資料夾(專案上按右鍵→加入→新增資料夾)
+//5.8.2 在ViewModels資料夾新增VMtStudent類別(右鍵→加入→類別→輸入VMtStudent.cs→按下「新增」鈕)做為Model
+//      (這個Model只給View排版用因此稱作ViewModel)
+//5.8.3 撰寫VMtStudent類別
+//5.8.4 撰寫MyStudnetsController裡新的IndexViewModel Action
+//5.8.5 製作IndexViewModel View，並視需要修改IndexViewModel View的排版方式
+//5.8.6 測試
+//5.8.7 修改IndexViewModel Action，將科系代碼由參數傳入，做為篩選條件
+//※補充說明※
+//View Model指的是專為View設計的Model，主要用於View的呈現或驗證規則(商業邏輯)

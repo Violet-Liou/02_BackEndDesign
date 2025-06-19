@@ -1,4 +1,5 @@
 ﻿using DBFirst.Models;
+using DBFirst.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,18 @@ namespace DBFirst.Controllers
         //4.1.4 撰寫建立DbContext物件的程式
         dbStudentsContext db = new dbStudentsContext(); // 直接建立 dbStudentsContext 的實例
 
+        //5.8.4 撰寫MyStudnetsController裡新的IndexViewModel Action
+        public IActionResult IndexViewModel(string id)
+        {
+            //string id =>從IndexViewModel.cshtml的超連結傳入的參數，代表系所編號
+
+            VMtStudent students = new VMtStudent() //建立VMtStudent物件
+            {
+                tStudent = db.tStudent.Where(s => s.DeptID == id).ToList(), //將tStudent資料表的資料存入VMtStudent物件的tStudent屬性
+                Department = db.Department.ToList() //將Department資料表的資料存入VMtStudent物件的Department屬性 
+            };
+            return View(students);
+        }
         
         //讀取tStudent資料表的資料
         public IActionResult Index()

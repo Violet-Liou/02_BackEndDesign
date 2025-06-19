@@ -1,0 +1,77 @@
+﻿@* @model IEnumerable<DBFirst.Models.tStudent> *@
+    @model DBFirst.ViewModels.VMtStudent
+
+@{
+    ViewData["Title"] = "IndexViewModel";
+}
+
+<h1>IndexViewModel</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<div class="row">
+    <div class="col-3 border-1">
+        <h3 calss="">科系</h3>
+        <ul>
+            @foreach (var item in Model.Department)
+            {
+                <li>
+					@* @item.DeptID - @item.DeptName *@
+					<a asp-action="IndexViewModel" asp-route-id="@item.DeptID">
+                        @item.DeptID -@item.DeptName
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="col-9">
+        <h3>學生資料</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fStuId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fEmail)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fScore)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.tStudent)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.fStuId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.fName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.fEmail)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.fScore)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.fStuId">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.fStuId">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.fStuId">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>>
+</div>
+
+
