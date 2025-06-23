@@ -9,10 +9,17 @@ namespace DBFirst.Controllers
     public class MyStudentsController : Controller
     {
         //4.1.4 撰寫建立DbContext物件的程式
-        dbStudentsContext db = new dbStudentsContext(); // 直接建立 dbStudentsContext 的實例
+        //dbStudentsContext db = new dbStudentsContext(); // 直接建立 dbStudentsContext 的實例
+        //使用【依賴注入】的方式建立DbContext物件
+        private readonly dbStudentsContext db; //宣告一個dbStudentsContext物件，代表資料庫上下文
+
+        public MyStudentsController(dbStudentsContext context) //建構子，接收dbStudentsContext物件
+        {
+            db = context; //將傳入的context賦值給db
+        }
 
         //5.8.4 撰寫MyStudnetsController裡新的IndexViewModel Action
-        public IActionResult IndexViewModel(string id)
+        public IActionResult IndexViewModel(string id = "01")
         {
             //string id =>從IndexViewModel.cshtml的超連結傳入的參數，代表系所編號
 
@@ -21,6 +28,10 @@ namespace DBFirst.Controllers
                 tStudent = db.tStudent.Where(s => s.DeptID == id).ToList(), //將tStudent資料表的資料存入VMtStudent物件的tStudent屬性
                 Department = db.Department.ToList() //將Department資料表的資料存入VMtStudent物件的Department屬性 
             };
+
+            ViewData["DeptName"] = db.Department.Find(id).DeptName;
+            ViewData["DeptID"] = id; //將系所編號存入ViewData，以便在視圖中使用
+
             return View(students);
         }
         
@@ -47,14 +58,17 @@ namespace DBFirst.Controllers
         //4.3   建立同步執行的Create Action
         //4.3.1 撰寫Create Action程式碼(需有兩個Create Action)
         //4.3.2 建立Create View
-        public IActionResult Create()
+        public IActionResult Create(String deptid)
         {
             //5.5.3 修改 Create Action
             ViewData["Dept"] = new SelectList(db.Department, "DeptID", "DeptName"); //建立給下拉選單的資料來源
-            //new SelectList =>做成一個select下拉選單
-            //_context.Department =>要用哪一個資料表
-            //DeptID是實際上要讀取到的值
-            //DeptName是要顯示的值
+                    //new SelectList =>做成一個select下拉選單
+                    //_context.Department =>要用哪一個資料表
+                    //DeptID是實際上要讀取到的值
+                    //DeptName是要顯示的值
+
+            //5.9.2 修改Get Create Action進行參數傳遞
+            ViewData["DeptID"] = deptid; 
             return View();
         }
 
@@ -70,6 +84,9 @@ namespace DBFirst.Controllers
             if(result != null)
             {
                 ViewData["ErrorMessage"] = "學號已存在，請重新輸入。"; //將錯誤訊息傳遞到View
+
+                ViewData["Dept"] = new SelectList(db.Department, "DeptID", "DeptName");
+                ViewData["DeptID"] = result.DeptID;
                 return View(student); //如果學號已存在，則返回Create視圖並顯示錯誤訊息
             }
 
@@ -83,7 +100,8 @@ namespace DBFirst.Controllers
                 //2. 回寫資料庫
                 db.SaveChanges(); //轉譯SQL，執行INSERT INTO tSeudent(fStuId, fName, fEmail, fScore)將變更儲存到資料庫
 
-                return RedirectToAction("Index"); //新增成功後，導向到Index Action
+                                                //5.9.3 修改Post Create Action進行參數傳遞
+                return RedirectToAction("IndexViewModel", new { id = student.DeptID }); //新增成功後，導向到Index Action
             }
 
             //如果模型驗證失敗，則回到Create View
@@ -92,7 +110,8 @@ namespace DBFirst.Controllers
 
         //4.4.1 撰寫Edit Action程式碼(需有兩個Edit Action)
         //此部分呈現的是編輯學生資料的功能，包含讀取學生資料和更新學生資料。
-        public ActionResult Edit(string id)
+        //5.9.4 修改Get Edit Action進行參數傳遞
+        public ActionResult Edit(string id, string deptid)
         {
             ViewData["TimeNow"] = DateTime.Now; //抓取時間
 
@@ -105,6 +124,9 @@ namespace DBFirst.Controllers
 
             //5.5.5 修改 Edit Action
             ViewData["Dept"] = new SelectList(db.Department, "DeptID", "DeptName"); //建立給下拉選單的資料來源
+
+            //5.9.4 修改Get Edit Action進行參數傳遞
+            ViewData["DeptID"] = deptid; //將系所編號存入ViewData，以便在視圖中使用
 
             return View(result);
         }
@@ -122,7 +144,8 @@ namespace DBFirst.Controllers
             {
                 db.tStudent.Update(student);
                 db.SaveChanges();
-                return RedirectToAction("Index"); //編輯完成後，導向到Index Action
+                                                        //5.9.5 修改Post Edit Action進行參數傳遞
+                return RedirectToAction("IndexViewModel", new { id = student.DeptID }); //編輯完成後，導向到Index Action
 
             }
             return View(student);
@@ -143,7 +166,7 @@ namespace DBFirst.Controllers
             db.tStudent.Remove(result); //如果找到對應的學生資料，則將其從模型資料中刪除
             db.SaveChanges(); //將變更儲存到資料庫
 
-            return RedirectToAction("Index"); //刪除完成後，導向到Index Action
+            return RedirectToAction("IndexViewModel", new { id = result.DeptID }); //刪除完成後，導向到Index Action
         }
 
     }

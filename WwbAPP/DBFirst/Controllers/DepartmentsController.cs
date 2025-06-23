@@ -12,15 +12,15 @@ namespace DBFirst.Controllers
     public class DepartmentsController : Controller
     {
         //2.2.2 將原先既有的程式碼(如下)註解掉
-        //private readonly dbStudentsContext _context;
+        private readonly dbStudentsContext _context;
 
-        //public DepartmentsController(dbStudentsContext context)
-        //{
-        //    _context = context;
-        //}
+        public DepartmentsController(dbStudentsContext context)
+        {
+            _context = context;
+        }
 
         //2.2.1 撰寫建立DbContext物件的程式
-        dbStudentsContext _context = new dbStudentsContext(); // 直接建立 dbStudentsContext 的實例
+        //dbStudentsContext _context = new dbStudentsContext(); // 直接建立 dbStudentsContext 的實例
 
         // GET: Departments
         public async Task<IActionResult> Index()

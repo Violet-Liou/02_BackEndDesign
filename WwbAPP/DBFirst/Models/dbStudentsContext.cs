@@ -7,18 +7,19 @@ namespace DBFirst.Models;
 public partial class dbStudentsContext : DbContext
 {
     //建構子
-    public dbStudentsContext()
-    {
-
-    }
-    //public dbStudentsContext(DbContextOptions<dbStudentsContext> options)
-    //    : base(options)
+    //public dbStudentsContext()
     //{
+
     //}
+    public dbStudentsContext(DbContextOptions<dbStudentsContext> options)
+        : base(options)
+    {
+    }
 
     //1.2.4 在dbStudentsContext.cs裡撰寫連線到資料庫的程式
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseSqlServer("Data Source=C501A105;Database=dbStudents;TrustServerCertificate=True;User ID=abcd;Password=1234");
+    //6.1.2 將dbStudentsContext中所寫的連線字串註解掉
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //        => optionsBuilder.UseSqlServer("Data Source=C501A105;Database=dbStudents;TrustServerCertificate=True;User ID=abcd;Password=1234");
 
 
 

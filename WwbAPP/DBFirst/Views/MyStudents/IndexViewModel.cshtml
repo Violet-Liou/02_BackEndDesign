@@ -2,76 +2,88 @@
     @model DBFirst.ViewModels.VMtStudent
 
 @{
-    ViewData["Title"] = "IndexViewModel";
+    ViewData["Title"] = "學生資料管理";
 }
 
-<h1>IndexViewModel</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1 class="text-center" style="background-color: cornflowerblue">@ViewData["Title"]</h1>
 
 <div class="row">
     <div class="col-3 border-1">
         <h3 calss="">科系</h3>
-        <ul>
+        <div class="list-group">
             @foreach (var item in Model.Department)
             {
-                <li>
-					@* @item.DeptID - @item.DeptName *@
-					<a asp-action="IndexViewModel" asp-route-id="@item.DeptID">
+                    @* @item.DeptID - @item.DeptName *@
+                    <a asp-action="IndexViewModel" asp-route-id="@item.DeptID" class="list-group-item list-group-item-action">
                         @item.DeptID -@item.DeptName
                     </a>
-                </li>
             }
-        </ul>
+        </div>
     </div>
     <div class="col-9">
-        <h3>學生資料</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fStuId)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fName)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fEmail)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fScore)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.tStudent)
-                {
+        <h3>@ViewData["DeptName"] 學生資料</h3>
+        @* 放在文字裡的值，用ViewData就可以讀到 
+        但若是要放在屬性裡的，就需要用ViewBag去讀取*@
+        <p class="text-end">
+            <a asp-action="Create" asp-route-deptid="@ViewBag.DeptID" class="btn btn-primary">新增學生資料</a>
+        </p>
+
+        @if (Model.tStudent.Count() == 0)
+        {
+            <div class="alert alert-info text-danger" role="alert">
+                <strong>目前沒有學生資料</strong>
+            </div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.fStuId)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.fName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.fEmail)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.fScore)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.fStuId">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.fStuId">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.fStuId">Delete</a>
-                        </td>
+                        <th>
+                            @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fStuId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fEmail)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.tStudent.FirstOrDefault().fScore)
+                        </th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.tStudent)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.fStuId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.fName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.fEmail)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.fScore)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.fStuId" asp-route-deptId="@item.DeptID" class="btn btn-warning btn-sm">編輯</a>
+                                @* <a asp-action="Delete" asp-route-id="@item.fStuId" class="btn btn-danger">刪除</a> *@
+                                <form asp-action="Delete">
+                                    <input type="hidden" value="@item.fStuId" name="id" />
+                                    <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
 </div>
 
 
