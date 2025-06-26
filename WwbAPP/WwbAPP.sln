@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyView", "MyView\MyView.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBFirst", "DBFirst\DBFirst.csproj", "{44F1BDCC-8A0B-4D0D-9ACA-BB05A5944116}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorthWindStore", "NorthWindStore\NorthWindStore.csproj", "{1741D652-B925-4227-8A5C-AC3D6DB2E5F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{44F1BDCC-8A0B-4D0D-9ACA-BB05A5944116}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44F1BDCC-8A0B-4D0D-9ACA-BB05A5944116}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44F1BDCC-8A0B-4D0D-9ACA-BB05A5944116}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1741D652-B925-4227-8A5C-AC3D6DB2E5F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1741D652-B925-4227-8A5C-AC3D6DB2E5F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1741D652-B925-4227-8A5C-AC3D6DB2E5F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1741D652-B925-4227-8A5C-AC3D6DB2E5F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

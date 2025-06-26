@@ -1,0 +1,100 @@
+﻿@model NorthWindStore.Models.Employees
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Employees</h4>
+    <hr />
+    <div class="row">
+        <dl class="col-8">
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.LastName)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.FirstName)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Title)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Title)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.TitleOfCourtesy)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.TitleOfCourtesy)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.BirthDate)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.BirthDate)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.HireDate)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.HireDate)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Address)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Address)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.PostalCode)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.PostalCode)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.HomePhone)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.HomePhone)
+            </dd>
+            <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Extension)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Extension)
+            </dd>
+        </dl>
+        <dl class="col-4">
+            @* <dt class = "col-sm-2">
+                @Html.DisplayNameFor(model => model.Photo)
+            </dt> *@
+            <dd class="col-sm-10">
+                @* @Html.DisplayFor(model => model.Photo) 原本系統寫的 *@
+                <img src="/Employees/GetPhoto/@Model.EmployeeID" /> @*  老師教的方法 *@
+                @*copilot教的方法 <img src="@Url.Action("GetPhoto", "Employees", new { id = Model.EmployeeID })" style="max-width:150px;max-height:150px;" /> *@
+            </dd>
+        </dl>
+        
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ReportsToNavigation)
+        </dt>
+    </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.EmployeeID" class="btn btn-warning btn-sm">編輯</a>
+    <a asp-action="Index" class="btn btn-success btn-sm">返回員工列表</a>
+</div>

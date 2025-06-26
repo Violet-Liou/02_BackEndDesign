@@ -1,0 +1,93 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model NorthWindStore.ViewModel.VMProduct
+@{
+    ViewData["Title"] = "學生資料管理";
+}
+
+<h1 class="text-center" style="background-color: cornflowerblue">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-3 border-1">
+        <h3 calss="">類別</h3>
+        <div class="list-group">
+            @foreach (var item in Model.Categories)
+            {
+                <a asp-action="IndexVModel" asp-route-id="@item.CategoryID" class="list-group-item list-group-item-action">
+                    @item.CategoryID -@item.CategoryName
+                </a>
+            }
+        </div>
+    </div>
+    <div class="col-9">
+        <h3>@ViewData["CateName"] 產品資料</h3>
+        @* 放在文字裡的值，用ViewData就可以讀到 
+        但若是要放在屬性裡的，就需要用ViewBag去讀取*@
+        <p class="text-end">
+            <a asp-action="Create" asp-route-deptid="@ViewBag.CateID" class="btn btn-primary">新增產品資料</a>
+        </p>
+
+        @if (Model.Products.Count() == 0)
+        {
+            <div class="alert alert-info text-danger" role="alert">
+                <strong>目前沒有產品資料</strong>
+            </div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Products.FirstOrDefault().ProductID)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Products.FirstOrDefault().ProductName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Products.FirstOrDefault().UnitPrice)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Products.FirstOrDefault().UnitsInStock)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Products.FirstOrDefault().Discontinued)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Products)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ProductID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ProductName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.UnitPrice)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.UnitsInStock)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Discontinued)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.ProductID" asp-route-deptId="@item.CategoryID" class="btn btn-warning btn-sm">編輯</a>
+                                @* <a asp-action="Delete" asp-route-id="@item.fStuId" class="btn btn-danger">刪除</a> *@
+                                <form asp-action="Delete">
+                                    <input type="hidden" value="@item.ProductID" name="id" />
+                                    <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
