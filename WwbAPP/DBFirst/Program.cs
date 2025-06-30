@@ -10,7 +10,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<dbStudentsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("dbStudentsConnection")));
 
-//【上方是在寫設定】
+//【上方是在寫設定、註冊服務】
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///【下方是要啟動上面寫的設定】 所以設定必須寫在啟動之前
 var app = builder.Build();

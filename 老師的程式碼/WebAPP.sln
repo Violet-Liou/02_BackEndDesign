@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyView", "MyView\MyView.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyModel_DBFirst", "MyModel_DBFirst\MyModel_DBFirst.csproj", "{C20A225F-51FC-424F-932E-7A4D4851C4F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorthwindStore", "NorthwindStore\NorthwindStore.csproj", "{81DB82D4-6E67-4B3F-B873-DB7AE60B4024}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyModel_CodeFirst", "MyModel_CodeFirst\MyModel_CodeFirst.csproj", "{CDCA3736-6815-42BF-A176-955C3204987E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{C20A225F-51FC-424F-932E-7A4D4851C4F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C20A225F-51FC-424F-932E-7A4D4851C4F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C20A225F-51FC-424F-932E-7A4D4851C4F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DB82D4-6E67-4B3F-B873-DB7AE60B4024}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DB82D4-6E67-4B3F-B873-DB7AE60B4024}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DB82D4-6E67-4B3F-B873-DB7AE60B4024}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DB82D4-6E67-4B3F-B873-DB7AE60B4024}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDCA3736-6815-42BF-A176-955C3204987E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDCA3736-6815-42BF-A176-955C3204987E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDCA3736-6815-42BF-A176-955C3204987E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDCA3736-6815-42BF-A176-955C3204987E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
