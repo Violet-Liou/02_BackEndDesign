@@ -1,0 +1,72 @@
+﻿@model CodeFirst.Models.Book
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+@* //2.2.4 修改Display View 排版樣式，排版可以個人喜好呈現 *@
+
+<div>
+    <h2>@Html.DisplayFor(modelItem => Model.Title)</h2>
+    <div class="card mb-4">
+        @* //2.4.9 在Display View中加入未上傳照片的留言之顯示方式 *@
+        @if (Model.Photo != null)
+        {
+            <img src="~/BookPhotos/@Model.Photo" class="card-img-top img-thumbnail" />
+        }
+
+        <div class="card-body">
+            @* <p>	@Html.DisplayFor(modelItem => Model.Description)</p> *@
+            @* //2.4.11 在Display View中加入處理「有換行的留言」顯示方式 *@
+            <p>	@Html.Raw(Model.Description.Replace("\r\n", "<br>"))</p>
+        </div>
+        <div class="card-footer">
+            <p class="text-end">
+                @Html.DisplayFor(modelItem => Model.Author) 於 	@Html.DisplayFor(modelItem => Model.CreateDate)
+            </p>
+        </div>
+
+    </div>
+
+    @* //2.3.10 編寫Display View，加入VCReBooks ViewComponent *@
+    <div>
+        @await Component.InvokeAsync("VCReBooks", new { bookID = Model.BookID })
+    </div>
+    @* <h4>Book</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Author)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Author)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Photo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Photo)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CreateDate)
+        </dd>
+    </dl> *@
+</div>
+<div>
+    <a asp-action="Index">回留言列表</a>
+</div>
