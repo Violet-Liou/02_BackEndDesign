@@ -27,9 +27,39 @@
         </div>
 
     </div>
+	<hr />
+
+    @* 嵌入回覆留言表單 *@
+    @* 方法一：單純嵌入在畫面中 *@
+   @*  <div id="ReBookForm" class="bg-light p-5 rounded"></div>
+
+	<hr /> *@
+
+	@* 方法二：使用Bootstrap Modal *@
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ReBookFormModal">
+        我要回覆
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="ReBookFormModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-3">我要回覆</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @* //嵌入回覆留言表單 *@
+                    <div id="ReBookForm" class="bg-light p-2 rounded">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     @* //2.3.10 編寫Display View，加入VCReBooks ViewComponent *@
-    <div>
+    <div id="ReBookList">
         @await Component.InvokeAsync("VCReBooks", new { bookID = Model.BookID })
     </div>
     @* <h4>Book</h4>
@@ -70,3 +100,56 @@
 <div>
     <a asp-action="Index">回留言列表</a>
 </div>
+
+
+
+@section Scripts {
+    @* //2.5.12 載入前端驗證套件(如jQuery Validation)以驗證Create View的表單 *@
+    @{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        //2.5.7 在PostBooks\Display View中將RePostBooks\Create View以Ajax方式讀入
+        //2.5.13 使用Callback function重新綁定 unobtrusive validation
+        $('#ReBookForm').load('/ReBooks/Create?BookID=@(Model.BookID)', function(){
+            //load結束以後，才去執行function
+            $.validator.unobtrusive.parse('#ReBookForm'); 
+            //將表單驗證的功能綁定到這個form上
+                //必須與 await Html.RenderPartialAsync("_ValidationScriptsPartial"); 這行程式一起跑
+        }); //2.5.8 傳遞BookID參數
+
+        //運用bootstrap的方法，使用選擇器 >> new bootstrap.Modal(選擇器)
+        const ReBookFormModal = new bootstrap.Modal(document.getElementById('ReBookFormModal'));
+
+        //2.5.15 在PostBooks\Display View中撰寫相關的JavaScript程式，以Ajax方式執行新增回覆留言
+        function addReBook(){
+            //2.5.17 在addReBook()函數中加入判斷是否驗證通過的程式
+			if(!$('#ReBookForm form').valid()) { //如果表單驗證失敗
+				return; //停下，不執行後續程式(表單不送出)
+			}
+
+            $.ajax({
+                type:"Post",
+                url:"/ReBooks/Create", //會找到有[HttpPost]的Create去執行
+                data: $('#ReBookForm form').serialize(), //serialize資料序列化
+                success: function(response) { //success >>假設這個ajax有成功被執行，要做的什麼事
+                    //1.更新底下的回覆留言區
+                    //透過跟ViewReBooks要，去更新ReBookList下的所有留言 
+                    //問題：ViewReBooks是需要透過controller去抓取
+                    //解決：需要在自己的controller中，去做一個action去抓取ViewReBooks
+                     $('#ReBookList').load('/ReBooks/GetReBookByViewComponent?BookID=@(Model.BookID)');
+
+                     //2.將表單重新載入
+                    $('#ReBookForm').load('/ReBooks/Create?BookID=@(Model.BookID)',function(){
+                        $.validator.unobtrusive.parse($('#ReBookForm'));
+                    });
+
+                    //3.將modal隱藏
+                    ReBookFormModal.hide();
+			    },
+                error:function(){
+                }
+            });
+        }
+    </script>
+}

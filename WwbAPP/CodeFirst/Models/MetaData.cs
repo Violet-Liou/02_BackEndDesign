@@ -52,10 +52,12 @@ public class ReBookData
     [Display(Name = "回覆編號")]
     [StringLength(36, MinimumLength = 36)]
     [Key]
+    [HiddenInput]
     public string ReBookID { get; set; } //留言編號，採用GUID (4組16進位的字串編的，有128bit，唯一識別值的產生方式)
 
     [Display(Name = "回覆內容")]
     [Required(ErrorMessage = "必填")]
+    [DataType(DataType.MultilineText)]
     public string Description { get; set; } //留言內容
 
     [Display(Name = "回覆者")]
@@ -73,6 +75,7 @@ public class ReBookData
 
     //外來鍵屬性
     [ForeignKey("Book")]
+    [HiddenInput]
     public string BookID { get; set; } = null!;
 }
 

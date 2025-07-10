@@ -1,0 +1,45 @@
+﻿@model CodeFirst.Models.ReBook
+
+@* 沒有放在Layout裡面，所以會呈現最原始的UI *@
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-12">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="ReBookID" class="form-control" value="@Guid.NewGuid()" />
+            @* <div class="form-group">
+                <label asp-for="ReBookID" class="control-label"></label>
+                <input asp-for="ReBookID" class="form-control" />
+                <span asp-validation-for="ReBookID" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="8" ></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author" class="control-label"></label>
+                <input asp-for="Author" class="form-control" />
+                <span asp-validation-for="Author" class="text-danger"></span>
+            </div>
+            @* <div class="form-group"> *@
+                @* <label asp-for="BookID" class="control-label"></label> *@
+                <input asp-for="BookID" class ="form-control" value="@ViewBag.BookID" />
+            @* </div> *@
+            <div class="form-group mt-4">
+                <div class="d-grid gap-2">
+                    @* <input type="submit" value="確定回覆" class="btn btn-success" /> *@
+                    @* submit 一定會重新載入整個頁面 
+                        對伺服器發出request (後端)
+                        靠瀏覽器重新載入頁面 (前端)
+                    *@
+                    @* type="button" >> 表示全部接手我們自己做 (利用onclick設定執行事件)*@
+                    <input type="button" onclick="addReBook()" value="確定回覆" class="btn btn-success" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

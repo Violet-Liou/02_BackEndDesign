@@ -34,3 +34,9 @@ namespace CodeFirst.Controllers
         }
     }
 }
+
+
+//兩個view放在一起有兩種做法：
+//1. 做一個view model，將兩個view的資料放在一起
+//2. 做一個view component，將兩個view的資料放在一起
+//以上皆是使用後端的方式去做
