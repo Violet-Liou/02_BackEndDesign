@@ -15,6 +15,7 @@ namespace CodeFirst.Controllers
             _context = context;
         }
 
+        //3.1.2 在HomeController中加入讀取Book資料表的程式
         public IActionResult Index()
         {
             var result = _context.Book.Where(b => b.Photo != null).OrderByDescending(s => s.CreateDate).Take(5).ToList();

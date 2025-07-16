@@ -55,6 +55,7 @@ namespace CodeFirst.Controllers
             //return View 會重新requset，但return Json(reBook)不會重新requset，這樣就不會回到頁面的最上方
         }
 
+        //2.5.16 在ReBooksController中撰寫自VCRebook ViewComponent取得回覆留言資料的Action
         public IActionResult GetReBookByViewComponent(string BookID)
         {
             return ViewComponent("VCReBooks", new { bookId = BookID });

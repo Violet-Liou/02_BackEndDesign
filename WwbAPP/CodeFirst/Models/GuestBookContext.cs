@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
+using CodeFirst.Models;
 
 namespace CodeFirst.Models
 {
@@ -27,7 +28,6 @@ namespace CodeFirst.Models
         public virtual DbSet<Book> Book { get; set; } //Book資料表
         public virtual DbSet<ReBook> ReBook { get; set; } //ReBook資料表
         //virtual ：指不是實際的資料表
-
 
         //1.2.6 在DbContext中使用Fluent API在GuestBookContext覆寫 OnModelCreating 方法
         //public 大家都可以使用
@@ -98,6 +98,11 @@ namespace CodeFirst.Models
                     .HasColumnType("datetime"); //指定CreateDate的資料型別為datetime
             });
         }
+        //1.2.2 撰寫GuestBookContext類別的內容
+        //public DbSet<CodeFirst.Models.Login> Login { get; set; } = default!;
+
+        //5.1.5 修改GuestBookContext類別的內容，加入描述資料庫裡Login的資料表
+        public virtual DbSet<Login> Login { get; set; } //Login資料表
 
     }
 }

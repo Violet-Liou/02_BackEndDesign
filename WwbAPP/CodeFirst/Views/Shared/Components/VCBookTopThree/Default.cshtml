@@ -1,0 +1,24 @@
+﻿@model IEnumerable<CodeFirst.Models.Book>
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-6">
+            <div class="card mb-4">
+                @if (item.Photo != null)
+                {
+                    <img src="~/BookPhotos/@item.Photo" class="card-img-top img-thumbnail" />
+                }
+
+                <div class="card-body">
+                    <h3>@Html.DisplayFor(modelItem => item.Title)</h3>
+                    <p class="text-truncate overflow-hidden" >@Html.Raw(item.Description)</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
