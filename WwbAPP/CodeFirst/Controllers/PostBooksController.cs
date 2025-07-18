@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CodeFirst.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CodeFirst.Controllers
 {
+    [Authorize(Roles = "Member")]
     public class PostBooksController : Controller
     {
         private readonly GuestBookContext _context;

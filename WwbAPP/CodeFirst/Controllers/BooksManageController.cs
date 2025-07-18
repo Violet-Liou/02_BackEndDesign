@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CodeFirst.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CodeFirst.Controllers
 {
+    [Authorize(Roles = "Manager")] // 這個特性用來限制只有已登入的用戶才能訪問此Controller
     public class BooksManageController : Controller
     {
         private readonly GuestBookContext _context;
