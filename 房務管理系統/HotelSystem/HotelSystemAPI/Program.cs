@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using MyWebAPI.Models;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,12 +7,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//1.2.4 在Program.cs內以依賴注入的寫法註冊讀取連線字串的服務
-// 註冊成Services使用
-builder.Services.AddDbContext<GoodStoreContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("GoodStoreConnection")));
-
-////////////////////////////////////////////////////////////////////////////////////////////
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,9 +15,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-//2.1.3 在Program.cs中加入app.UseStaticFiles(); (因為我們開的是 純WebAPI專案)
-app.UseStaticFiles();
 
 app.UseAuthorization();
 

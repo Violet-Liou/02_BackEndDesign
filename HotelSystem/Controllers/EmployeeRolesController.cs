@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HotelSystem.Data;
+using HotelSystem.Access.Data;
 using HotelSystem.Models;
 
 namespace HotelSystem.Controllers
@@ -22,6 +22,7 @@ namespace HotelSystem.Controllers
         // GET: EmployeeRoles
         public async Task<IActionResult> Index()
         {
+            _context.GetRoomServiceCount();
             return View(await _context.EmployeeRole.ToListAsync());
         }
 

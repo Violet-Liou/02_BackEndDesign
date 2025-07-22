@@ -1,4 +1,4 @@
-using HotelSystem.Data;
+using HotelSystem.Access.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

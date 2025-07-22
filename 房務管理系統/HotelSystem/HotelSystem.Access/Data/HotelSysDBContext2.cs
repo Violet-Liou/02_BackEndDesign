@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HotelSystem.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HotelSystem.Data;
+namespace HotelSystem.Access.Data;
 
 public partial class HotelSysDBContext2 : HotelSysDBContext
 {

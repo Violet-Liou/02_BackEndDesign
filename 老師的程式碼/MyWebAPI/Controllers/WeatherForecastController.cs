@@ -88,3 +88,80 @@ namespace MyWebAPI.Controllers
 //      若成功的話，會看到Build succeeded.字眼，並在Models資料夾裡看到GoodStoreContext.cs、Category.cs、Product.cs等資料庫相關類別檔
 //2.2.4 在appsettings.json檔中撰寫連線字串(ConnectionString)
 //2.2.5 在Program.cs註冊DbContext物件(GoodStoreContext.cs)並指定appsettings.json中的連線字串程式碼(這段必須寫在var builder這行後面)
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+//3     製作具CRUD 的 Restful API(Web API)
+
+//3.1   建立Category資料的 API Ccontroller 
+//3.1.1 在Controllers資料夾上按右鍵→加入→控制器
+//3.1.2 左側選單點選「API」→ 中間主選單選擇「使用Entity Framework執行動作的API控制器」→按下「加入」鈕
+//3.1.3 在對話方塊中設定如下
+//      模型類別: Category(MyStoreAPI.Models)
+//      資料內容類別: GoodStoreContext(MyStoreAPI.Models)
+//      控制器名稱使用預設即可(CategoriesController)
+//      按下「新增」鈕
+//3.1.4 修改API介接路由為「api[controller]」
+
+
+//3.2   建立Product資料的 API Ccontroller 
+//3.2.1 在Controllers資料夾上按右鍵→加入→控制器
+//3.2.2 左側選單點選「API」→ 中間主選單選擇「使用Entity Framework執行動作的API控制器」→按下「加入」鈕
+//3.2.3 在對話方塊中設定如下
+//      模型類別: Product(MyStoreAPI.Models)
+//      資料內容類別: GoodStoreContext(MyStoreAPI.Models)
+//      控制器名稱使用預設即可(ProductsController)
+//      按下「新增」鈕
+//3.2.4 修改API介接路由為「api[controller]」
+//※使用Swagger Tool分別對上面兩個 API進行操作測試※
+
+
+
+//3.3   資料接收來源
+//3.3.1 以Swagger測試查看目前CategoriesController及ProductsController的資料來源
+//3.3.2 將CategoriesController及ProductsController中的Action參數改變資料接收來源並以Swagger測試及交叉比較
+//※資料接收來源的觀念很重要，必須配合實作的測試，透過Swagger觀查變化，就能知道使用時機※
+
+//※補充說明※
+//[FromBody]：HTTP 請求的主體內容(Body)綁定到Action的參數上，通常用於取得JSON、XML或其他格式的文字資料。
+//[FromForm]：將來自HTTP請求主體的表單資料綁定到Action的參數上，常用於接收來自表單form提交的資料，例如 application/x-www-form-urlencoded 或 multipart/form-data。
+//[FromQuery]：將URL中的參數綁定到Action的參數上，當你希望從 URL 的取得資料時使用。
+//[FromHeader]：將HTTP請求中的標頭值綁定到Action的參數上，適合從Request Header中取得資料，例如Authentication Token、Client端資訊等。
+//[FromRoute]：將URL路由中的參數綁定到Action的參數上，當URL的某部分是動態的，需要取得這些路由參數時使用。
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+//4     使用Get取得資料
+
+//4.1   取得資料清單(ProductsController裡的第一個Get Action)
+//4.1.1 先使用Swagger測試及觀查目前Product的資料取得狀況
+//4.1.2 使用Include()同時取得關聯資料
+//4.1.3 使用Where()改變查詢的條件並測試
+//4.1.4 使用OrderBy()相關排序方法改變資料排序並測試
+//4.1.5 使用Select()抓取特定的欄位並測試
+//4.1.6 使用Swagger測試及觀查目前Product的資料取得狀況，並進行上述相關測試
+//※這裡有一些重要的觀念必須解釋及透過實作來加強印象，尤其資料表之間的關聯特性將會影響實作的方式※
+//※發生循環參照時可使用JsonIgnore來解決※
+
+
+//4.2   使用DTO(Data Transfer Object)資料傳輸物件
+//4.2.1 建立DTOs資料夾(這個步驟可視需求而定)來放置相關檔案
+//4.2.2 建立ProductDTO類別
+//4.2.3 改寫ProductsController裡的Get Action
+//4.2.4 使用Swagger測試
+//※想要抓取特定欄位最典型的方法就是使用DTO來傳輸※
+
+
+
+//4.3   取得特定資料(ProductsController裡的第二個Get Action)
+//4.3.1 先使用Swagger測試及觀查目前Product的資料取得狀況(理解參數及介接口)
+//4.3.2 使用Include()同時取得關聯資料並使用ProductDTO來傳遞資料
+//4.3.3 使用Swagger測試
+//※發生循環參照時可使用JsonIgnore來解決※
