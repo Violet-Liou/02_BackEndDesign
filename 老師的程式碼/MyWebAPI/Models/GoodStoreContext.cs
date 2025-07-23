@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using MyWebAPI.DTOs;
 
 namespace MyWebAPI.Models;
 
@@ -21,8 +22,19 @@ public partial class GoodStoreContext : DbContext
 
     public virtual DbSet<Product> Product { get; set; }
 
+    //4.7.6 將GoodStoreContext.cs中與ProductDTO有關的設置刪除
+    //4.6.5 修改GoodStoreContext，增加ProductDTO的DbSet屬性
+    //public virtual DbSet<ProductDTO> ProductDTO { get; set; }
+
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        //4.7.6 將GoodStoreContext.cs中與ProductDTO有關的設置刪除
+        //4.6.8 修改GoodStoreContext的OnModelCreating()，標示ProductDTO為HasNoKey
+        //modelBuilder.Entity<ProductDTO>(entity=>entity.HasNoKey());
+
+
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.CateID).HasName("PK__Category__27638D744910E426");
@@ -70,6 +82,7 @@ public partial class GoodStoreContext : DbContext
                 .HasForeignKey(d => d.MemberID)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Order__MemberID__412EB0B6");
+
         });
 
         modelBuilder.Entity<OrderDetail>(entity =>
@@ -106,9 +119,7 @@ public partial class GoodStoreContext : DbContext
             entity.Property(e => e.CateID)
                 .HasMaxLength(2)
                 .IsFixedLength();
-            entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+        
             entity.Property(e => e.Description).HasMaxLength(200);
             entity.Property(e => e.Picture).HasMaxLength(12);
             entity.Property(e => e.Price).HasColumnType("money");

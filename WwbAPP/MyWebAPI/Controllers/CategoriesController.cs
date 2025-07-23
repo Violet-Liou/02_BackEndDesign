@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyWebAPI.DTOs;
 using MyWebAPI.Models;
 
 namespace MyWebAPI.Controllers
@@ -21,27 +22,43 @@ namespace MyWebAPI.Controllers
             _context = context;
         }
 
+        //4.5.3 改寫CategoriesController裡的第一個Get Action
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
+        //public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategory()
         {
-            var result = await _context.Category.ToListAsync();
+            //var result = await _context.Category.ToListAsync();
 
-            for(var i=0; i< result.Count(); i++)
-            {
-                result[i].Product = await _context.Product
-                                    .Where(p => p.CateID == result[i].CateID)
-                                    .AsNoTracking().ToListAsync();
-            }
+            //for (var i = 0; i < result.Count(); i++)
+            //{
+            //    result[i].Product = await _context.Product
+            //                        .Where(p => p.CateID == result[i].CateID)
+            //                        .AsNoTracking().ToListAsync();
+            //}
+
+            var result = await _context.Category
+                .Include(c => c.Product)
+                .Select(c => ItemCategory(c))
+                .AsNoTracking()
+                .ToListAsync();
 
             return result;
         }
 
+        //4.5.6 改寫CategoriesController裡的第二個Get Action
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(string id)
+        //public async Task<ActionResult<Category>> GetCategory(string id)
+        public async Task<ActionResult<CategoryDTO>> GetCategory(string id)
         {
-            var category = await _context.Category.FindAsync(id);
+            //var category = await _context.Category.FindAsync(id);
+            //4.5.7 使用Include()同時取得關聯資料並以CategoryDTO傳遞
+            var category = await _context.Category
+                                .Include(c => c.Product)
+                                .Where(c => c.CateID == id)
+                                .Select(c => ItemCategory(c))
+                                .FirstOrDefaultAsync();
 
             if (category == null)
             {
@@ -126,6 +143,19 @@ namespace MyWebAPI.Controllers
         private bool CategoryExists(string id)
         {
             return _context.Category.Any(e => e.CateID == id);
+        }
+
+        //4.5.2 建立CategoryDTO類別
+        private static CategoryDTO ItemCategory(Category c)
+        {
+            var result =  new CategoryDTO
+            {
+                CateID = c.CateID,
+                CateName = c.CateName,
+                Product = c.Product
+            };
+
+            return result;
         }
     }
 }

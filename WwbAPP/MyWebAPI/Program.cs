@@ -6,6 +6,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+//在Program.cs中加入Json序列化的設定，讓前端可以正確讀取資料
+//全域性的註冊，讓所有的Controller都使用這個設定，設定不會無窮參照
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -13,6 +23,10 @@ builder.Services.AddSwaggerGen();
 //1.2.4 在Program.cs內以依賴注入的寫法註冊讀取連線字串的服務
 // 註冊成Services使用
 builder.Services.AddDbContext<GoodStoreContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("GoodStoreConnection")));
+
+//4.7.7 在Program裡註冊GoodStoreContext2的Service(※注意※原本註冊的GoodStoreContext不可刪掉)
+builder.Services.AddDbContext<GoodStoreContextG2>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GoodStoreConnection")));
 
 ////////////////////////////////////////////////////////////////////////////////////////////
