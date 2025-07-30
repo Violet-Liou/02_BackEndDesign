@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MyWebAPI.DTOs;
 using MyWebAPI.Models;
@@ -170,27 +171,34 @@ namespace MyWebAPI.Controllers
             string sql = "select p.ProductID, p.ProductName, p.Price, p.Description, p.Picture, p.CateID, c.CateName " +
                 " from Product as p inner join Category as c on p.CateID=c.CateID where 1=1 ";
 
+            List<SqlParameter> parameter = new List<SqlParameter>();
+
             if (!string.IsNullOrEmpty(cateID))
             {
 
-                sql += $" and p.CateID = '{cateID}' ";
+                sql += " and p.CateID = @cate ";
+                parameter.Add(new SqlParameter("@cate", cateID));
             }
 
             if (!string.IsNullOrEmpty(productName))
             {
 
-                sql += $" and p.ProductName like '%{productName}%' ";
+                sql += $" and p.ProductName like @productName ";
+                parameter.Add(new SqlParameter("@productName", productName));
             }
 
             if (minPrice.HasValue && maxPrice.HasValue)
             {
-                sql += $" and between {minPrice} and {maxPrice} ";
+                sql += $" and between @minPrice and @maxPrice ";
+                parameter.Add(new SqlParameter("@minPrice", minPrice));
+                parameter.Add(new SqlParameter("@maxPrice", maxPrice));
             }
 
 
             if (!string.IsNullOrEmpty(description))
             {
-                sql += $" and p.Description like '%{description}%' ";
+                sql += $" and p.Description like @description ";
+                parameter.Add(new SqlParameter("@description", description));
             }
 
             //4.6.4 使用Swagger測試(這裡會發生錯誤，因為使用了合併查詢)
@@ -244,6 +252,26 @@ namespace MyWebAPI.Controllers
             return product;
         }
 
+        //4.8.2 在ProductsController中建立一個新的Get Action
+        //4.8.3 設置介接口為[HttpGet("fromProc/{id}")]，Action名稱可自訂，並使用ProductDTO來傳遞資料
+        [HttpGet("fromProc/{id}")]
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductFromProc(string id)
+        {
+            //4.8.4 使用預存程序進行查詢(參數的傳遞請使用SqlParameter)
+            string sql = $"exec getProductWithCateName @CateID";
+
+            var cateID = new SqlParameter("@CateID", id);
+
+            var products = await _context.ProductDTO.FromSqlRaw(sql, cateID).ToListAsync();
+            //改成參數化
+
+            if (products == null || products.Count() == 0)
+            {
+                return NotFound("找不到產品資料");
+            }
+
+            return products;
+        }
         
 
         // PUT: api/Products/5

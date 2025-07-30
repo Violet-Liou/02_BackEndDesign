@@ -5,8 +5,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
 
+
+//跨域存取政策
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyCorsPolicy", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
+
+//builder.Services.AddControllers();
+
+//4.7.10 在Program裡全域啟用 ReferenceHandler.Preserves
 //在Program.cs中加入Json序列化的設定，讓前端可以正確讀取資料
 //全域性的註冊，讓所有的Controller都使用這個設定，設定不會無窮參照
 builder.Services.AddControllers()
@@ -38,6 +51,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("MyCorsPolicy");
 
 //2.1.3 在Program.cs中加入app.UseStaticFiles(); (因為我們開的是 純WebAPI專案)
 app.UseStaticFiles();
