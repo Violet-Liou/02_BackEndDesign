@@ -15,6 +15,8 @@ public partial class Category
     [StringLength(20)]
     public string CateName { get; set; } = null!;
 
+    //不用加ignore的原因：雖然Category對Product是一對多，但是不會形成循環。
+    /// /如果會形成循環就一定要加(EX：Product>OrderDetail>Product>OrderDetail....)。
     [InverseProperty("Cate")]
-    public virtual ICollection<Product> Product { get; set; } = new List<Product>();
+    public virtual ICollection<Product>? Product { get; set; } = new List<Product>();
 }

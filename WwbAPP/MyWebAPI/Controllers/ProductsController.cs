@@ -305,6 +305,57 @@ namespace MyWebAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("put2{id}")]
+        public async Task<IActionResult> PutProd(string id, ProductPutDTO product)
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+
+            var Pro = await _context.Product.FindAsync(id); //查找傳回來的資料使否有這個id
+
+            if (Pro == null)
+            {
+                return NotFound("查無資料");
+            }
+
+            //檢查是否有新照片上傳
+            if (product.Picture != null && product.Picture.Length != 0)
+            {
+                FileUpload(product.Picture, id);
+
+            }
+
+            Pro.ProductName = product.ProductName;
+            Pro.Price= product.Price;
+            Pro.Description = product.Description;
+
+            _context.Entry(Pro).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(Pro);
+        }
+
+        //http通訊協定，只有兩種傳送資料的方式：POST(不從網址列取得資料)、GET(從網址列取得資料)
+        //REST分有四種動作：GET(取得資料)、POST(新增資料)、PUT(更新資料)、DELETE(刪除資料)
+        //除了GET以外，其他三種動作都會有資料傳送到伺服器端。
+        //
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -326,6 +377,91 @@ namespace MyWebAPI.Controllers
                     throw;
                 }
             }
+
+            return CreatedAtAction("GetProduct", new { id = product.ProductID }, product);
+        }
+
+        //5.2.4 建立一個新的Post Action，介接口設定為[HttpPost("PostWithPhoto")]，並加入上傳檔案的動作
+        [HttpPost("PostWithPhoto")]
+        public async Task<ActionResult<ProductPostDTO>> PostProductWithPhoto([FromForm] ProductPostDTO product)
+        {
+            //好的架構是，先將控制邏輯判斷寫在前面，後面再開始組需要上傳的東西(商業邏輯)
+
+            //上傳檔案的處理
+            if (product.Picture != null || product.Picture.Length == 0)
+            {
+                return BadRequest();
+            }
+
+            //5.2.5 將上傳檔案寫成一個獨立的方法
+
+            ////判斷上傳的檔案是否為圖片格式
+            //var extension = Path.GetExtension(product.Picture.FileName).ToLower();
+            //var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" }; //允許的圖片副檔名
+            ////想比於使用if去判斷每個副檔名，這樣寫法更簡潔、架構更好
+            ////if (extension != ".jpg" && extension != ".jpeg" && extension != ".png")
+
+            //if(allowedExtensions.Contains(extension))
+            //{
+            //    //沒找到，將檔案踢回去 (因為使用的是ActionResult，所以一定是要使用HTTP的方法)
+            //    return BadRequest("上傳的檔案不是有效的圖片格式。");
+            //}
+
+            ////檔案上傳的路徑
+            //var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProductPhotos");
+
+            ////確保目錄存在
+            //if (!Directory.Exists(uploadPath))
+            //{
+            //    Directory.CreateDirectory(uploadPath); //如果目錄不存在，則建立目錄
+            //}
+
+            ////如果有上傳檔案，則處理檔案上傳
+            //var fileName = product.ProductID + Path.GetExtension(product.Picture.FileName); //使用ProductID作為檔名，並保留原始副檔名
+            //var filePath = Path.Combine(uploadPath, fileName); //設定儲存路徑 "/wwwroot/ProductPhotos/XXXXX.jpg"
+
+            ////將上傳的檔案儲存到指定路徑
+            //using (var stream = new FileStream(filePath, FileMode.Create))
+            //{
+            //    product.Picture.CopyToAsync(stream);
+            //}
+
+            string fileName = FileUpload(product.Picture, product.ProductID);
+
+            if(fileName == "")
+            {
+                return BadRequest("上傳的檔案不是有效的圖片格式。");
+            }
+
+            Product p = new Product
+            {
+                ProductID = product.ProductID,
+                ProductName = product.ProductName,
+                Price = product.Price,
+                Description = product.Description,
+                Picture = fileName,
+                CateID = product.CateID
+            };
+
+
+            //寫入資料庫
+            _context.Product.Add(p);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (ProductExists(product.ProductID))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        
 
             return CreatedAtAction("GetProduct", new { id = product.ProductID }, product);
         }
@@ -363,6 +499,46 @@ namespace MyWebAPI.Controllers
                 CateID = p.CateID,
                 CateName = p.Cate.CateName // 只選取需要的欄位，並包含Cate的CateName
             };
+        }
+
+
+        //5.2.5 將上傳檔案寫成一個獨立的方法
+        private string FileUpload(IFormFile Photo, string PID)
+        {
+            //判斷上傳的檔案是否為圖片格式
+            var extension = Path.GetExtension(Photo.FileName).ToLower();
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" }; //允許的圖片副檔名
+            //想比於使用if去判斷每個副檔名，這樣寫法更簡潔、架構更好
+            //if (extension != ".jpg" && extension != ".jpeg" && extension != ".png")
+
+            if (! allowedExtensions.Contains(extension))
+            {
+                //沒找到，將檔案踢回去 (因為使用的是ActionResult，所以一定是要使用HTTP的方法)
+                //return BadRequest("上傳的檔案不是有效的圖片格式。");
+                //原先回傳 BadRequest，但因為這個方法是要回傳「string」，所以無法使用HTTP的方法，而是要回傳string類型的值
+                return ""; //回傳空字串，表示上傳失敗
+            }
+
+            //檔案上傳的路徑
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProductPhotos");
+
+            //確保目錄存在
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath); //如果目錄不存在，則建立目錄
+            }
+
+            //如果有上傳檔案，則處理檔案上傳
+            var fileName = PID + Path.GetExtension(Photo.FileName); //使用ProductID作為檔名，並保留原始副檔名
+            var filePath = Path.Combine(uploadPath, fileName); //設定儲存路徑 "/wwwroot/ProductPhotos/XXXXX.jpg"
+
+            //將上傳的檔案儲存到指定路徑
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                Photo.CopyToAsync(stream);
+            }
+
+            return fileName; //回傳檔名
         }
 
     }

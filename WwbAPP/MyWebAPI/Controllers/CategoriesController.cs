@@ -99,12 +99,67 @@ namespace MyWebAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("put2{id}")]
+        public async Task<IActionResult> PutCate(string id,[FromForm] CategoryPutDTO category)
+        {
+            //if (id != category.CateID)
+            //{
+            //    return BadRequest();
+            //}
+
+            //控制邏輯 >> if....
+            if (id == null)
+            {
+                return BadRequest();
+            }
+
+            var cate = await _context.Category.FindAsync(id); //查找傳回來的資料使否有這個id
+
+            if(cate == null)
+            {
+                return NotFound("查無資料");
+            }
+
+            cate.CateName = category.CateName; //只修改CateName
+
+            _context.Entry(cate).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync(); //真正寫入資料庫
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CategoryExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            //return NoContent();
+            return Ok(cate); //讓OK回傳整個cate的內容(等同update以後，直接把資料select出來)
+        }
+
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //5.3.10 修改CategoriesController的Post方法，使其傳遞CategoryPostDTO
         [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory([FromForm]Category category)
+        public async Task<ActionResult<CategoryPostDTO>> PostCategory(CategoryPostDTO category)
         {
-            _context.Category.Add(category);
+            //5.3.11 修改Post Action 內的寫法
+
+            //要把DTO轉成原先的物件類別
+            Category cata = new Category()
+            {
+                CateID = category.CateID,
+                CateName = category.CateName
+            };
+
+            _context.Category.Add(cata);
             try
             {
                 await _context.SaveChangesAsync();

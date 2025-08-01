@@ -31,9 +31,12 @@ public partial class Product
     [JsonIgnore]
     [ForeignKey("CateID")]
     [InverseProperty("Product")]
-    public virtual Category Cate { get; set; } = null!;
+    public virtual Category? Cate { get; set; } = null!;
+    //如果用[FromForm]的方式傳遞POST，就需要修改Model(因有些欄位是非必填，只需要在那些非必填的欄位上加上「?」即可)
+    //但需要注意，在Swagger上測試時，欄位值刪除後，會自動勾選「Send empty value」，需要把這個勾掉，資料才會傳送正確!!
+    //推論：無法傳遞一個空的序列值，要直接沒有資料，傳遞時會整個欄位NULL掉。
 
     [JsonIgnore]
     [InverseProperty("Product")]
-    public virtual ICollection<OrderDetail> OrderDetail { get; set; } = new List<OrderDetail>();
+    public virtual ICollection<OrderDetail>? OrderDetail { get; set; } = new List<OrderDetail>();
 }

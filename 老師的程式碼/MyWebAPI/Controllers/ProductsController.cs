@@ -34,7 +34,7 @@ namespace MyWebAPI.Controllers
 
         // GET: api/Products
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProduct(string? cateID, string? productName ,decimal? minPrice, decimal? maxPrice, string? description  )
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProduct(string? cateID, string? productName, decimal? minPrice, decimal? maxPrice, string? description)
         {
             //4.1.2 使用Include()同時取得關聯資料
             //4.1.3 使用Where()改變查詢的條件並測試
@@ -99,7 +99,7 @@ namespace MyWebAPI.Controllers
                 //products = products.Where(p => p.Price >= minPrice && p.Price <= maxPrice).ToList();
                 products = products.Where(p => p.Price >= minPrice && p.Price <= maxPrice);
             }
-                
+
 
             //4.4.5 加入產品敘述關鍵字搜尋
             if (!string.IsNullOrEmpty(description))
@@ -109,7 +109,7 @@ namespace MyWebAPI.Controllers
             }
 
 
-            if(products == null || products.Count()==0)
+            if (products == null || products.Count() == 0)
             {
                 return NotFound("找不到產品資料");
             }
@@ -186,7 +186,7 @@ namespace MyWebAPI.Controllers
 
             var cateID = new SqlParameter("@cateID", id);
 
-            var products= await _context.ProductDTO.FromSqlRaw(sql, cateID).ToListAsync();
+            var products = await _context.ProductDTO.FromSqlRaw(sql, cateID).ToListAsync();
 
             if (products == null || products.Count() == 0)
             {
@@ -219,14 +219,36 @@ namespace MyWebAPI.Controllers
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(string id, Product product)
+        public async Task<IActionResult> PutProduct(string id, [FromForm]ProductPutDTO product)
         {
-            if (id != product.ProductID)
+            //if (id != product.ProductID)
+            //{
+            //    return BadRequest();
+            //}
+            if (id == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(product).State = EntityState.Modified;
+            var p = await _context.Product.FindAsync(id);
+            if (p == null)
+            {
+                return NotFound("查無資料");
+            }
+
+            //檢查是否有新照片上傳
+            if (product.Picture != null || product.Picture.Length != 0)
+            {
+                FileUpload(product.Picture, id);
+
+            }
+
+            p.ProductName = product.ProductName;
+            p.Price = product.Price;
+            p.Description = product.Description;
+
+
+            _context.Entry(p).State = EntityState.Modified;
 
             try
             {
@@ -244,7 +266,7 @@ namespace MyWebAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(p);
         }
 
         // POST: api/Products
@@ -268,6 +290,58 @@ namespace MyWebAPI.Controllers
                     throw;
                 }
             }
+
+            return CreatedAtAction("GetProduct", new { id = product.ProductID }, product);
+        }
+
+        //5.2.4 建立一個新的Post Action，介接口設定為[HttpPost("PostWithPhoto")]，並加入上傳檔案的動作
+        [HttpPost("PostWithPhoto")]
+        public async Task<ActionResult<ProductPostDTO>> PostProductWithPhoto([FromForm] ProductPostDTO product)
+        {
+            //判斷檔案是否上傳
+            if (product.Picture == null || product.Picture.Length == 0)
+            {
+                return BadRequest("未上傳商品圖片");
+            }
+
+            string fileName = await FileUpload(product.Picture, product.ProductID);
+
+            if(fileName=="")
+            {
+                return BadRequest("上傳的檔案格式不正確，請上傳jpg、jpeg或png格式的圖片");
+            }
+
+
+            Product p = new Product
+            {
+                ProductID = product.ProductID,
+                ProductName = product.ProductName,
+                Price = product.Price,
+                Description = product.Description,
+                Picture = fileName,
+                CateID = product.CateID
+            };
+
+
+
+            //寫入資料庫
+            _context.Product.Add(p);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (ProductExists(product.ProductID))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
 
             return CreatedAtAction("GetProduct", new { id = product.ProductID }, product);
         }
@@ -307,16 +381,48 @@ namespace MyWebAPI.Controllers
                 Picture = p.Picture,
                 CateID = p.CateID,
                 CateName = p.Cate.CateName
-               
+
             };
 
             return result;
 
         }
 
+        //5.2.5 將上傳檔案寫成一個獨立的方法
+        private async Task<string> FileUpload(IFormFile Photo, string PID)
+        {
+            //判斷上傳的檔案是否為圖片格式
+            var extension = Path.GetExtension(Photo.FileName).ToLower();
+            var allowedExtension = new[] { ".jpg", ".jpeg", ".png" };
 
-         
+            if (!allowedExtension.Contains(extension))
+            {
+                return "";
+            }
 
 
-}
+            //檔案上傳的路徑
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProductPhotos");
+
+            //確保目錄存在
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            //檔案名稱(ProductID+副檔名)
+            var fileName = PID + Path.GetExtension(Photo.FileName);
+
+            var filePath = Path.Combine(uploadPath, fileName); //"/wwwroot/ProductPhotos/XXXXX.jpg";
+
+            //儲存檔案
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await Photo.CopyToAsync(stream);
+            }
+
+
+            return fileName; //回傳檔案名稱
+        }
+    }
 }
