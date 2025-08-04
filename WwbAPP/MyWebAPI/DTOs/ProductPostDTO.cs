@@ -1,6 +1,7 @@
 ﻿using MyWebAPI.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static MyWebAPI.ValidationAttributes.MyValidator;
 
 namespace MyWebAPI.DTOs
 {
@@ -38,19 +39,19 @@ namespace MyWebAPI.DTOs
     //類別名稱絕對不能重複!!!!
 
     //5.3.3 在ProductPostDTO.cs加入自訂驗證器(使用ValidationAttribute物件)
-    public class ProductNameCheck: ValidationAttribute //因為是驗證器的class，所以需要繼承「ValidationAttribute」
-    {
-        //ValidationResult >> 驗證結果
-        //ActionResult >> 動作結果
-        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
-        {
-            string PName = value.ToString();
+    //public class ProductNameCheck: ValidationAttribute //因為是驗證器的class，所以需要繼承「ValidationAttribute」
+    //{
+    //    //ValidationResult >> 驗證結果
+    //    //ActionResult >> 動作結果
+    //    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+    //    {
+    //        string PName = value.ToString();
 
-            if (PName.Length < 3)
-            {
-                return new ValidationResult("商品名稱至少三個字");
-            }
-            return ValidationResult.Success;
-        }
-    }
+    //        if (PName.Length < 3)
+    //        {
+    //            return new ValidationResult("商品名稱至少三個字");
+    //        }
+    //        return ValidationResult.Success;
+    //    }
+    //}
 }

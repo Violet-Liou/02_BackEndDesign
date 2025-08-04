@@ -426,7 +426,7 @@ namespace MyWebAPI.Controllers
             //    product.Picture.CopyToAsync(stream);
             //}
 
-            string fileName = FileUpload(product.Picture, product.ProductID);
+            string fileName = await FileUpload(product.Picture, product.ProductID);
 
             if(fileName == "")
             {
@@ -466,6 +466,7 @@ namespace MyWebAPI.Controllers
             return CreatedAtAction("GetProduct", new { id = product.ProductID }, product);
         }
 
+        //7.1.1 改寫ProductsController中Delete Action內容，加入刪除照片的功能
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(string id)
@@ -476,8 +477,47 @@ namespace MyWebAPI.Controllers
                 return NotFound();
             }
 
+            //await 是當你需要等待某個非同步方法完成時使用。(對應async方法)
+            //刪除照片
+            if (! await FileDelete(product.Picture))
+            {
+                return BadRequest("刪除商品照片失敗，請檢查檔案是否存在或權限問題。");
+            }
+
             _context.Product.Remove(product);
             await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("ByCateID")]
+        public async Task<IActionResult> DeleteProductByCateID(string cateID)
+        {
+            var products = await _context.Product.Where(p => p.CateID == cateID).ToListAsync();
+            if (products == null)
+            {
+                return NotFound();
+            }
+            
+            
+            foreach(var p in products) 
+            {
+                //刪除照片
+                if (!await FileDelete(p.Picture))
+                {
+                    return BadRequest("刪除商品照片失敗，請檢查檔案是否存在或權限問題。");
+                }
+                //刪除商品資料
+                _context.Product.Remove(p);
+            }
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex) 
+            {
+                return NotFound("刪除商品失敗，請檢查商品是否存在。");
+            }
 
             return NoContent();
         }
@@ -487,6 +527,7 @@ namespace MyWebAPI.Controllers
             return _context.Product.Any(e => e.ProductID == id);
         }
 
+        //4.4.1 將資料轉換的程式寫成函數並再次改寫Get Action(※這種寫法架構才會好※)
         private static ProductDTO ItemProduct(Product p)
         {
             return new ProductDTO
@@ -503,7 +544,7 @@ namespace MyWebAPI.Controllers
 
 
         //5.2.5 將上傳檔案寫成一個獨立的方法
-        private string FileUpload(IFormFile Photo, string PID)
+        private async Task<string> FileUpload(IFormFile Photo, string PID)
         {
             //判斷上傳的檔案是否為圖片格式
             var extension = Path.GetExtension(Photo.FileName).ToLower();
@@ -539,6 +580,34 @@ namespace MyWebAPI.Controllers
             }
 
             return fileName; //回傳檔名
+        }
+
+        //7.1.2 將刪除照片功能另建立FileDelete()方法
+        private async Task<bool> FileDelete(string fileName)
+        {
+            //檔案上傳的路徑
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProductPhotos");
+            var filePath = Path.Combine(path, fileName);
+
+
+            //防止發生例外，先做檢查
+            if (!System.IO.File.Exists(filePath))
+            {
+                try
+                {
+                    System.IO.File.Delete(filePath); //刪除檔案
+
+                    return true; //檔案刪除成功
+                }
+                catch (Exception ex)
+                {
+                    //處理例外情況
+                    Console.WriteLine($"刪除檔案時發生錯誤: {ex.Message}");
+
+                    return false; //檔案刪除失敗
+                }
+            }
+            return false; //檔案不存在，無法刪除
         }
 
     }

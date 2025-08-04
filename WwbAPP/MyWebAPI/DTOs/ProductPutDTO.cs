@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static MyWebAPI.ValidationAttributes.MyValidator;
 
 namespace MyWebAPI.DTOs
 {
