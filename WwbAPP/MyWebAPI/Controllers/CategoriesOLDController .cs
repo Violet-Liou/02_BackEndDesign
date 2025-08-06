@@ -13,11 +13,11 @@ namespace MyWebAPI.Controllers
     //3.1.4 修改API介接路由為「api[controller]」
     [Route("api[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class CategoriesOLDController : ControllerBase
     {
         private readonly GoodStoreContext _context;
 
-        public CategoriesController(GoodStoreContext context)
+        public CategoriesOLDController(GoodStoreContext context)
         {
             _context = context;
         }
@@ -38,7 +38,7 @@ namespace MyWebAPI.Controllers
             //}
 
             var result = await _context.Category
-                .Include(c => c.Product)
+                .Include(c => c.Product) //等同SQL上的 JOIN
                 .Select(c => ItemCategory(c))
                 .AsNoTracking()
                 .ToListAsync();
@@ -70,7 +70,7 @@ namespace MyWebAPI.Controllers
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("{id}")] //系統自己產生的
         public async Task<IActionResult> PutCategory(string id, Category category)
         {
             if (id != category.CateID)
@@ -99,7 +99,7 @@ namespace MyWebAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("put2{id}")]
+        [HttpPut("put2{id}")] //老師教的
         public async Task<IActionResult> PutCate(string id,[FromForm] CategoryPutDTO category)
         {
             //if (id != category.CateID)
