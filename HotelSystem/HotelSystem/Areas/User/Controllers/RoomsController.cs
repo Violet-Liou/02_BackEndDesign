@@ -8,25 +8,28 @@ using Microsoft.EntityFrameworkCore;
 using HotelSystem.Access.Data;
 using HotelSystem.Models;
 
-namespace HotelSystem.Controllers
+namespace HotelSystem.Areas.User.Controllers
 {
-    public class EmployeeRolesController : Controller
+    [Area("User")]
+    public class RoomsController : Controller
     {
         private readonly HotelSysDBContext2 _context;
 
-        public EmployeeRolesController(HotelSysDBContext2 context)
+        public RoomsController(HotelSysDBContext2 context)
         {
             _context = context;
         }
 
-        // GET: EmployeeRoles
+        // GET: User/Rooms
         public async Task<IActionResult> Index()
         {
-            _context.GetRoomServiceCount();
-            return View(await _context.EmployeeRole.ToListAsync());
+            var rooms = _context.Room.Where(r => r.StatusCode == "1");
+            ViewData["RoomPhotos"] = await _context.RoomPhoto.ToListAsync();
+
+            return View(await rooms.ToListAsync());
         }
 
-        // GET: EmployeeRoles/Details/5
+        // GET: User/Rooms/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -34,39 +37,42 @@ namespace HotelSystem.Controllers
                 return NotFound();
             }
 
-            var employeeRole = await _context.EmployeeRole
-                .FirstOrDefaultAsync(m => m.RoleCode == id);
-            if (employeeRole == null)
+            var room = await _context.Room
+                .Include(r => r.StatusCodeNavigation)
+                .FirstOrDefaultAsync(m => m.RoomID == id);
+            if (room == null)
             {
                 return NotFound();
             }
 
-            return View(employeeRole);
+            return View(room);
         }
 
-        // GET: EmployeeRoles/Create
+        // GET: User/Rooms/Create
         public IActionResult Create()
         {
+            ViewData["StatusCode"] = new SelectList(_context.RoomStatus, "StatusCode", "StatusCode");
             return View();
         }
 
-        // POST: EmployeeRoles/Create
+        // POST: User/Rooms/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RoleCode,RoleName")] EmployeeRole employeeRole)
+        public async Task<IActionResult> Create([Bind("RoomID,RoomName,PeopleNum,Price,Area,Floor,Introduction,Note,CreatedDate,StatusCode")] Room room)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employeeRole);
+                _context.Add(room);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(employeeRole);
+            ViewData["StatusCode"] = new SelectList(_context.RoomStatus, "StatusCode", "StatusCode", room.StatusCode);
+            return View(room);
         }
 
-        // GET: EmployeeRoles/Edit/5
+        // GET: User/Rooms/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -74,22 +80,23 @@ namespace HotelSystem.Controllers
                 return NotFound();
             }
 
-            var employeeRole = await _context.EmployeeRole.FindAsync(id);
-            if (employeeRole == null)
+            var room = await _context.Room.FindAsync(id);
+            if (room == null)
             {
                 return NotFound();
             }
-            return View(employeeRole);
+            ViewData["StatusCode"] = new SelectList(_context.RoomStatus, "StatusCode", "StatusCode", room.StatusCode);
+            return View(room);
         }
 
-        // POST: EmployeeRoles/Edit/5
+        // POST: User/Rooms/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("RoleCode,RoleName")] EmployeeRole employeeRole)
+        public async Task<IActionResult> Edit(string id, [Bind("RoomID,RoomName,PeopleNum,Price,Area,Floor,Introduction,Note,CreatedDate,StatusCode")] Room room)
         {
-            if (id != employeeRole.RoleCode)
+            if (id != room.RoomID)
             {
                 return NotFound();
             }
@@ -98,12 +105,12 @@ namespace HotelSystem.Controllers
             {
                 try
                 {
-                    _context.Update(employeeRole);
+                    _context.Update(room);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeRoleExists(employeeRole.RoleCode))
+                    if (!RoomExists(room.RoomID))
                     {
                         return NotFound();
                     }
@@ -114,10 +121,11 @@ namespace HotelSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(employeeRole);
+            ViewData["StatusCode"] = new SelectList(_context.RoomStatus, "StatusCode", "StatusCode", room.StatusCode);
+            return View(room);
         }
 
-        // GET: EmployeeRoles/Delete/5
+        // GET: User/Rooms/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -125,34 +133,35 @@ namespace HotelSystem.Controllers
                 return NotFound();
             }
 
-            var employeeRole = await _context.EmployeeRole
-                .FirstOrDefaultAsync(m => m.RoleCode == id);
-            if (employeeRole == null)
+            var room = await _context.Room
+                .Include(r => r.StatusCodeNavigation)
+                .FirstOrDefaultAsync(m => m.RoomID == id);
+            if (room == null)
             {
                 return NotFound();
             }
 
-            return View(employeeRole);
+            return View(room);
         }
 
-        // POST: EmployeeRoles/Delete/5
+        // POST: User/Rooms/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var employeeRole = await _context.EmployeeRole.FindAsync(id);
-            if (employeeRole != null)
+            var room = await _context.Room.FindAsync(id);
+            if (room != null)
             {
-                _context.EmployeeRole.Remove(employeeRole);
+                _context.Room.Remove(room);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeRoleExists(string id)
+        private bool RoomExists(string id)
         {
-            return _context.EmployeeRole.Any(e => e.RoleCode == id);
+            return _context.Room.Any(e => e.RoomID == id);
         }
     }
 }

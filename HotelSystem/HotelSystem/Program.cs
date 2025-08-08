@@ -5,10 +5,9 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews(options=> 
-    {
-        options.Filters.Add<LogFilter>();
-    });
+builder.Services.AddControllersWithViews(options => {
+    options.Filters.Add<LogFilter>();
+});
 
 
 builder.Services.AddDbContext<HotelSysDBContext>(options =>
@@ -46,7 +45,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "EmployeeRole",
     pattern: "Manager/{action=Index}/{id?}",
-    defaults: new { controller = "EmployeeRoles", action = "Index" });
+    defaults: new {area="Admin", controller = "EmployeeRoles" });
 
 
 
@@ -54,7 +53,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "about",
     pattern: "about-us",
-    defaults: new { area = "Guest", controller = "Home", action = "Privacy" });
+    defaults: new {  controller = "Home", action = "Privacy" });
 
 
 
