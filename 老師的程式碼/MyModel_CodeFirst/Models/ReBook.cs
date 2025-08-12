@@ -17,8 +17,8 @@ namespace MyModel_CodeFirst.Models
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        //1.1.5 撰寫兩個類別間的關聯屬性做為未來資料表之間的關聯
-        public string BookID { get; set; } = null!;
+            //1.1.5 撰寫兩個類別間的關聯屬性做為未來資料表之間的關聯
+            public string BookID { get; set; } = null!;
 
         public virtual Book? Book { get; set; } //一個ReBook只能屬於一個Book
     }
