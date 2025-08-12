@@ -75,46 +75,50 @@ namespace MyWebAPI.Controllers
         }
 
         [HttpGet("fromSQL")]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductFromSQL(string? cateID, string? productName, decimal? minPrice, decimal? maxPrice, string? description)
+        //public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductFromSQL(string? cateID, string? productName, decimal? minPrice, decimal? maxPrice, string? description)
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductFromSQL([FromQuery] ProductParam productParam)
+        //[FromQuery]  顯著標示資料傳輸的方式
         {
 
-            string sql = "select p.ProductID, p.ProductName, p.Price, p.Description, p.Picture, p.CateID, c.CateName " +
-                " from Product as p inner join Category as c on p.CateID=c.CateID where 1=1 ";
+            //string sql = "select p.ProductID, p.ProductName, p.Price, p.Description, p.Picture, p.CateID, c.CateName " +
+            //    " from Product as p inner join Category as c on p.CateID=c.CateID where 1=1 ";
 
-            List<SqlParameter> parameter = new List<SqlParameter>();
+            //List<SqlParameter> parameter = new List<SqlParameter>();
 
-            if (!string.IsNullOrEmpty(cateID))
-            {
+            //if (!string.IsNullOrEmpty(cateID))
+            //{
 
-                sql += " and p.CateID = @cate ";
-                parameter.Add(new SqlParameter("@cate", cateID));
-            }
+            //    sql += " and p.CateID = @cate ";
+            //    parameter.Add(new SqlParameter("@cate", cateID));
+            //}
 
-            if (!string.IsNullOrEmpty(productName))
-            {
+            //if (!string.IsNullOrEmpty(productName))
+            //{
 
-                sql += $" and p.ProductName like @productName ";
-                parameter.Add(new SqlParameter("@productName", productName));
-            }
+            //    sql += $" and p.ProductName like @productName ";
+            //    parameter.Add(new SqlParameter("@productName", productName));
+            //}
 
-            if (minPrice.HasValue && maxPrice.HasValue)
-            {
-                sql += $" and between @minPrice and @maxPrice ";
-                parameter.Add(new SqlParameter("@minPrice", minPrice));
-                parameter.Add(new SqlParameter("@maxPrice", maxPrice));
-            }
-
-
-            if (!string.IsNullOrEmpty(description))
-            {
-                sql += $" and p.Description like @description ";
-                parameter.Add(new SqlParameter("@description", description));
-            }
-
-            var products = await _context.ProductDTO.FromSqlRaw(sql).ToListAsync();
+            //if (minPrice.HasValue && maxPrice.HasValue)
+            //{
+            //    sql += $" and between @minPrice and @maxPrice ";
+            //    parameter.Add(new SqlParameter("@minPrice", minPrice));
+            //    parameter.Add(new SqlParameter("@maxPrice", maxPrice));
+            //}
 
 
-            if (products == null || products.Count() == 0)
+            //if (!string.IsNullOrEmpty(description))
+            //{
+            //    sql += $" and p.Description like @description ";
+            //    parameter.Add(new SqlParameter("@description", description));
+            //}
+
+            //var products = await _context.ProductDTO.FromSqlRaw(sql).ToListAsync();
+
+            var products = await _productService.GetProductFromSQL(productParam);
+
+
+            if (products == null) //|| products.Count() == 0 這句一直出現錯誤
             {
                 return NotFound("找不到產品資料");
             }
@@ -150,14 +154,16 @@ namespace MyWebAPI.Controllers
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductFromProc(string id)
         {
             //4.8.4 使用預存程序進行查詢(參數的傳遞請使用SqlParameter)
-            string sql = $"exec getProductWithCateName @CateID";
+            //string sql = $"exec getProductWithCateName @CateID";
 
-            var cateID = new SqlParameter("@CateID", id);
+            //var cateID = new SqlParameter("@CateID", id);
 
-            var products = await _context.ProductDTO.FromSqlRaw(sql, cateID).ToListAsync();
+            //var products = await _context.ProductDTO.FromSqlRaw(sql, cateID).ToListAsync();
             //改成參數化
 
-            if (products == null || products.Count() == 0)
+            var products = await _productService.GetProductFromProc(id);
+
+            if (products == null) //|| products.Count() == 0
             {
                 return NotFound("找不到產品資料");
             }

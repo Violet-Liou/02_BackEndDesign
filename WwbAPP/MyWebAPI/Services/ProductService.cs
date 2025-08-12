@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MyWebAPI.DTOs;
 using MyWebAPI.Models;
@@ -66,6 +67,67 @@ namespace MyWebAPI.Services
             //}
 
             return product;
+        }
+
+        //[HttpGet("fromSQL")]
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductFromSQL(ProductParam productParam)
+        {
+
+            string sql = "select p.ProductID, p.ProductName, p.Price, p.Description, p.Picture, p.CateID, c.CateName " +
+                " from Product as p inner join Category as c on p.CateID=c.CateID where 1=1 ";
+
+            List<SqlParameter> parameter = new List<SqlParameter>();
+
+            if (!string.IsNullOrEmpty(productParam.catID))
+            {
+
+                sql += " and p.CateID = @cate ";
+                parameter.Add(new SqlParameter("@cate", productParam.catID));
+            }
+
+            if (!string.IsNullOrEmpty(productParam.productName))
+            {
+
+                sql += $" and p.ProductName like @productName ";
+                parameter.Add(new SqlParameter("@productName", $"%{productParam.productName}%"));
+            }
+
+            if (productParam.minPrice.HasValue && productParam.maxPrice.HasValue)
+            {
+                sql += $" and between @minPrice and @maxPrice ";
+                parameter.Add(new SqlParameter("@minPrice", productParam.minPrice));
+                parameter.Add(new SqlParameter("@maxPrice", productParam.maxPrice));
+            }
+
+
+            if (!string.IsNullOrEmpty(productParam.description))
+            {
+                sql += $" and p.Description like @description ";
+                parameter.Add(new SqlParameter("@description", $"%{productParam.description}%"));
+            }
+
+            var products = await _context.ProductDTO.FromSqlRaw(sql).ToListAsync();
+
+            return products;
+        }
+
+        //[HttpGet("fromProc/{id}")]
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductFromProc(string id)
+        {
+            //4.8.4 使用預存程序進行查詢(參數的傳遞請使用SqlParameter)
+            string sql = $"exec getProductWithCateName @CateID";
+
+            var cateID = new SqlParameter("@CateID", id);
+
+            var products = await _context.ProductDTO.FromSqlRaw(sql, cateID).ToListAsync();
+            //改成參數化
+
+            //if (products == null || products.Count() == 0)
+            //{
+            //    return NotFound("找不到產品資料");
+            //}
+
+            return products;
         }
 
         private static ProductDTO ItemProduct(Product p)
