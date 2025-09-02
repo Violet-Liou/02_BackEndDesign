@@ -1,3 +1,5 @@
-Scaffold-DbContext "Data Source=C501A19;Database=HotelSysDB;TrustServerCertificate=True;User ID=abcd;Password=1234" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -ContextDir Data -DataAnnotations -NoOnConfiguring -UseDatabaseNames -NoPluralize -Force
+Scaffold-DbContext "Data Source=C501A19;Database=DomusOneSysDB;TrustServerCertificate=True;User ID=abcd;Password=1234" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -ContextDir Data -DataAnnotations -NoOnConfiguring -UseDatabaseNames -NoPluralize -Force
 
-Scaffold-DbContext "Data Source=C501A19;Database=GoodStore;TrustServerCertificate=True;User ID=abcd;Password=1234" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -DataAnnotations -NoOnConfiguring -UseDatabaseNames -NoPluralize -Force
+Scaffold-DbContext "Data Source=C501A19;Database=DomusOneSysDB;TrustServerCertificate=True;User ID=abcd;Password=1234" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -DataAnnotations -NoOnConfiguring -UseDatabaseNames -NoPluralize -Force
+
+Scaffold-DbContext "Data Source=C501A19;Database=DomusOneSysDB;TrustServerCertificate=True;User ID=abcd;Password=1234" Microsoft.EntityFrameworkCore.SqlServer -OutputDir  -ContextDir Data -DataAnnotations -NoOnConfiguring -UseDatabaseNames -NoPluralize -Force
