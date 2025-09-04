@@ -8,11 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using HotelSystem.Access.Data;
 using HotelSystem.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace HotelSystem.Areas.User.Controllers
 {
     [Area("User")]
-    [Authorize(Roles = "Member")]
+    //[Authorize(Roles = "Member")]
     public class OrdersController : Controller
     {
         private readonly HotelSysDBContext2 _context;
@@ -57,12 +58,14 @@ namespace HotelSystem.Areas.User.Controllers
         }
 
         // GET: User/Orders/Create
-        public IActionResult Create()
+        public IActionResult Create(DateTime ExpectedCheckInDate, DateTime ExpectedCheckOutDate)
         {
-            ViewData["EmployeeID"] = new SelectList(_context.Employee, "EmployeeID", "EmployeeID");
-            ViewData["MemberID"] = new SelectList(_context.Member, "MemberID", "MemberID");
-            ViewData["PayCode"] = new SelectList(_context.PayType, "PayCode", "PayCode");
-            ViewData["StatusCode"] = new SelectList(_context.OrderStatus, "StatusCode", "StatusCode");
+            ViewData["ExpectedCheckInDate"] = ExpectedCheckInDate;
+
+            ViewData["ExpectedCheckOutDate"] = ExpectedCheckOutDate;
+
+            ViewData["PayCode"] = new SelectList(_context.PayType, "PayCode", "PayType1");
+         
             return View();
         }
 
@@ -71,18 +74,35 @@ namespace HotelSystem.Areas.User.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderID,OrderDate,ExpectedCheckInDate,ExpectedCheckOutDate,Note,MemberID,EmployeeID,PayCode,StatusCode")] Order order)
+        public async Task<IActionResult> Create(Order order)
         {
+            //OrderID要系統自動產生
+            //OrderDate等寫入資料庫時再抓
+            order.MemberID = User.FindFirst(ClaimTypes.Sid)?.Value;
+            order.EmployeeID = null;
+            order.StatusCode = "0";
+
+
+            ModelState.Remove("OrderID");
+            ModelState.Remove("StatusCode");
+            ModelState.Remove("MemberID");
+            ModelState.Remove("Member");
+            ModelState.Remove("PayCodeNavigation");
+            ModelState.Remove("StatusCodeNavigation");
+
+
             if (ModelState.IsValid)
             {
                 _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmployeeID"] = new SelectList(_context.Employee, "EmployeeID", "EmployeeID", order.EmployeeID);
-            ViewData["MemberID"] = new SelectList(_context.Member, "MemberID", "MemberID", order.MemberID);
-            ViewData["PayCode"] = new SelectList(_context.PayType, "PayCode", "PayCode", order.PayCode);
-            ViewData["StatusCode"] = new SelectList(_context.OrderStatus, "StatusCode", "StatusCode", order.StatusCode);
+
+            ViewData["ExpectedCheckInDate"] = order.ExpectedCheckInDate;
+
+            ViewData["ExpectedCheckOutDate"] = order.ExpectedCheckOutDate;
+
+            ViewData["PayCode"] = new SelectList(_context.PayType, "PayCode", "PayType1");
             return View(order);
         }
 
